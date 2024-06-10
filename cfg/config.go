@@ -7,6 +7,7 @@ import (
 )
 
 var Config models.Config
+var Domain = "clerk.suno.com"
 
 func ConfigInit() {
 	viper.AddConfigPath(".")      // 设置配置文件路径为当前目录

@@ -3,6 +3,7 @@ package serve
 import (
 	"bytes"
 	"encoding/json"
+	"fksunoapi/cfg"
 	"fksunoapi/models"
 	"fmt"
 	"io"
@@ -45,7 +46,7 @@ func NewErrorResponseWithError(errorCode int, err error) *ErrorResponse {
 }
 
 func GetSession(c string) string {
-	_url := "https://clerk.suno.ai/v1/client?_clerk_js_version=4.70.5"
+	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.70.5"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, _url, nil)
@@ -75,7 +76,7 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	if time.Now().After(time.Unix(SessionExp/1000, 0)) {
 		Session = GetSession(c)
 	}
-	_url := fmt.Sprintf("https://clerk.suno.ai/v1/client/sessions/%s/tokens?_clerk_js_version=4.70.5", Session)
+	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?_clerk_js_version=4.70.5", Session)
 	method := "POST"
 
 	client := &http.Client{}
