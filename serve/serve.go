@@ -46,7 +46,8 @@ func NewErrorResponseWithError(errorCode int, err error) *ErrorResponse {
 }
 
 func GetSession(c string) string {
-	fmt.Println("cookie", c)
+	fmt.Println("cookie1", c)
+
 	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.70.5"
 	method := "GET"
 	client := &http.Client{}
