@@ -46,6 +46,7 @@ func NewErrorResponseWithError(errorCode int, err error) *ErrorResponse {
 }
 
 func GetSession(c string) string {
+	fmt.Println("cookie", c)
 	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.70.5"
 	method := "GET"
 	client := &http.Client{}
@@ -68,8 +69,16 @@ func GetSession(c string) string {
 		log.Printf("GetSession failed, json unmarshal error: %v", err)
 		return ""
 	}
-	SessionExp = data.Response.Sessions[0].ExpireAt
-	return data.Response.Sessions[0].Id
+
+	if len(data.Response.Sessions) > 0 {
+		SessionExp = data.Response.Sessions[0].ExpireAt
+	}
+
+	if len(data.Response.Sessions) > 0 {
+		return data.Response.Sessions[0].Id
+	}
+
+	return ""
 }
 
 func GetJwtToken(c string) (string, *ErrorResponse) {
