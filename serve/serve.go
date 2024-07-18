@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fksunoapi/cfg"
+	"fksunoapi/common"
 	"fksunoapi/models"
 	"fmt"
+	fhttp "github.com/bogdanfinn/fhttp"
 	"io"
 	"log"
 	"net/http"
@@ -48,7 +50,7 @@ func NewErrorResponseWithError(errorCode int, err error) *ErrorResponse {
 func GetSession(c string) string {
 	fmt.Println("cookie1", c)
 
-	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.70.5"
+	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.73.3"
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, _url, nil)
@@ -65,6 +67,9 @@ func GetSession(c string) string {
 		return ""
 	}
 	body, _ := io.ReadAll(res.Body)
+
+	//log.Printf("session", string(body))
+
 	var data models.GetSessionData
 	if err = json.Unmarshal(body, &data); err != nil {
 		log.Printf("GetSession failed, json unmarshal error: %v", err)
@@ -89,8 +94,7 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?_clerk_js_version=4.70.5", Session)
 	method := "POST"
 
-	client := &http.Client{}
-	req, err := http.NewRequest(method, _url, nil)
+	req, err := fhttp.NewRequest(method, _url, nil)
 
 	if err != nil {
 		log.Printf("GetJwtToken failed, error: %v", err)
@@ -99,12 +103,14 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
 	req.Header.Add("Cookie", "__client="+c)
 
-	res, err := client.Do(req)
+	res, err := common.Client.Do(req)
 	if err != nil {
 		log.Printf("GetJwtToken failed, error: %v", err)
 		return "", NewErrorResponse(ErrCodeRequestFailed, "send request failed")
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
 
 	body, _ := io.ReadAll(res.Body)
 	if res.StatusCode != 200 {
@@ -122,43 +128,61 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 		log.Print("GetJwtToken failed, empty jwt token")
 		return "", NewErrorResponse(ErrCodeResponseInvalid, "get empty jwt token")
 	}
+
 	return data.Jwt, nil
 }
 
 func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 	jwt, errResp := GetJwtToken(c)
+
+	//log.Println("jwt", jwt, "342342", errResp)
 	if errResp != nil {
 		errMsg := fmt.Sprintf("error getting JWT: %s", errResp.ErrorMsg)
 		log.Printf("sendRequest failed, %s", errMsg)
 		return nil, NewErrorResponse(errResp.ErrorCode, errMsg)
 	}
 
-	client := &http.Client{}
-	var req *http.Request
+	//client := &http.Client{}
+	var req *fhttp.Request
 	var err error
 	if data != nil {
-		req, err = http.NewRequest(method, url, bytes.NewReader(data))
+		req, err = fhttp.NewRequest(method, url, bytes.NewReader(data))
 	} else {
-		req, err = http.NewRequest(method, url, nil)
+		req, err = fhttp.NewRequest(method, url, nil)
 	}
+
 	if err != nil {
-		log.Printf("sendRequest failed, error creating request: %v", err)
+		log.Printf("sendRequest failed123111, error creating request: %v", err)
 		return nil, NewErrorResponseWithError(ErrCodeRequestFailed, err)
 	}
 
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
+	//要突破
+
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+
 	req.Header.Add("Authorization", "Bearer "+jwt)
+	req.Header.Add("Origin", "https://suno.com")
+	req.Header.Add("Referer", "https://suno.com")
+	req.Header.Add("Content-Type", "text/plain;charset=UTF-8")
+	req.Header.Add("Priority", "u=1, i")
 
-	res, err := client.Do(req)
+	res, err := common.Client.Do(req)
+
 	if err != nil {
-		log.Printf("sendRequest failed, error sending request: %v", err)
+		log.Printf("sendRequest failed2222222, error sending request: %v", err)
 		return nil, NewErrorResponseWithError(ErrCodeRequestFailed, err)
 	}
-	defer res.Body.Close()
+
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
 
 	body, _ := io.ReadAll(res.Body)
+
+	//log.Println("bodybodybodybodybodybody", string(body))
+
 	if res.StatusCode != 200 {
-		log.Printf("sendRequest failed, unexpected status code: %d, response body: %s", res.StatusCode, string(body))
+		log.Printf("sendRequest failed55555555, unexpected status code: %d, response body: %s", res.StatusCode, string(body))
 		return body, NewErrorResponse(ErrCodeResponseInvalid, fmt.Sprintf("unexpected status code: %d, response body: %s", res.StatusCode, string(body)))
 	}
 
@@ -166,6 +190,7 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 }
 
 func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
+	//https://studio-api.suno.ai/api/generate/v2/
 	_url := "https://studio-api.suno.ai/api/generate/v2/"
 	jsonData, err := json.Marshal(d)
 	if err != nil {
@@ -221,6 +246,9 @@ func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse)
 		"make_instrumental":      false,
 	}
 	body, errResp := V2Generate(d, ck)
+
+	log.Println("12312312", string(body), errResp)
+
 	if errResp != nil {
 		return nil, errResp
 	}
