@@ -2,8 +2,10 @@ package common
 
 //goland:noinspection GoSnakeCaseUsage
 import (
+	"fksunoapi/cfg"
 	tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/bogdanfinn/tls-client/profiles"
+	"log"
 )
 
 //goland:noinspection SpellCheckingInspection
@@ -17,6 +19,7 @@ var (
 
 //goland:noinspection GoUnhandledErrorResult
 func init() {
+	cfg.ConfigInit()
 
 	Client, _ = tls_client.NewHttpClient(tls_client.NewNoopLogger(), []tls_client.HttpClientOption{
 		tls_client.WithCookieJar(tls_client.NewCookieJar()),
@@ -24,4 +27,6 @@ func init() {
 		tls_client.WithClientProfile(profiles.Chrome_120),
 	}...)
 
+	log.Println("cfg.Config.Proxy.Url", cfg.Config.Proxy.Url)
+	Client.SetProxy(cfg.Config.Proxy.Url)
 }

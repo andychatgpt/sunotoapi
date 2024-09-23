@@ -20,6 +20,7 @@ func CreateTask() fiber.Handler {
 		} else {
 			ck = serve.ParseToken(ck)
 		}
+
 		serve.Session = serve.GetSession(ck)
 		var body []byte
 		var errResp *serve.ErrorResponse

@@ -91,7 +91,7 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	if time.Now().After(time.Unix(SessionExp/1000, 0)) {
 		Session = GetSession(c)
 	}
-	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?_clerk_js_version=4.70.5", Session)
+	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?_clerk_js_version=4.73.3", Session)
 	method := "POST"
 
 	req, err := fhttp.NewRequest(method, _url, nil)
@@ -113,6 +113,9 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	}(res.Body)
 
 	body, _ := io.ReadAll(res.Body)
+
+	//log.Println(string(body))
+
 	if res.StatusCode != 200 {
 		log.Printf("GetJwtToken failed, invalid status code: %d, response: %s", res.StatusCode, string(body))
 		return "", NewErrorResponse(ErrCodeResponseInvalid, "invalid response")
@@ -158,13 +161,13 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 
 	//要突破
 
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:127.0) Gecko/20100101 Firefox/127.0")
 
 	req.Header.Add("Authorization", "Bearer "+jwt)
-	req.Header.Add("Origin", "https://suno.com")
+	//req.Header.Add("Origin", "https://suno.com")
 	req.Header.Add("Referer", "https://suno.com")
 	req.Header.Add("Content-Type", "text/plain;charset=UTF-8")
-	req.Header.Add("Priority", "u=1, i")
+	//req.Header.Add("Priority", "u=1, i")
 
 	res, err := common.Client.Do(req)
 

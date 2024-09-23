@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Config struct {
 	Server struct {
@@ -8,6 +10,9 @@ type Config struct {
 	} `yaml:"Server"`
 	App struct {
 		Client string `yaml:"Client"`
+	}
+	Proxy struct {
+		Url string `yaml:"Url"`
 	}
 }
 
