@@ -243,7 +243,8 @@ func GetLyricsTask(ids, c string) ([]byte, *ErrorResponse) {
 func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse) {
 	lastUserContent := getLastUserContent(c)
 	d := map[string]interface{}{
-		"mv":                     c["model"].(string),
+		//"mv":                     c["model"].(string),
+		"mv":                     "chirp-v3-5",
 		"gpt_description_prompt": lastUserContent,
 		"prompt":                 "",
 		"make_instrumental":      false,
