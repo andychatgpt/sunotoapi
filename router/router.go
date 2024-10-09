@@ -30,6 +30,7 @@ func CreateTask() fiber.Handler {
 		} else if c.Path() == "/v2/lyrics/create" {
 			body, errResp = serve.GenerateLyrics(data, ck)
 		}
+
 		if errResp != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(errResp)
 		}
@@ -53,6 +54,7 @@ func GetTask() fiber.Handler {
 		} else {
 			ck = serve.ParseToken(ck)
 		}
+
 		serve.Session = serve.GetSession(ck)
 		var body []byte
 		var errResp *serve.ErrorResponse

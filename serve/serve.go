@@ -211,7 +211,10 @@ func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
 
 func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 	ids = url.QueryEscape(ids)
-	_url := "https://studio-api.suno.ai/api/feed/?ids=" + ids
+	//https://studio-api.prod.suno.com/api/feed/v2?ids=ea0e897e-22fa-4b55-8876-56e8529c24a1%2C37c11f85-09be-4d84-a8be-63925d697376
+	_url := "https://studio-api.prod.suno.com/api/feed/?ids=" + ids
+	//_url := "https://studio-api.suno.ai/api/feed/?ids=" + ids
+
 	body, errResp := sendRequest(_url, "GET", c, nil)
 	if errResp != nil {
 		return body, errResp
@@ -220,7 +223,7 @@ func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 }
 
 func GenerateLyrics(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
-	_url := "https://studio-api.suno.ai/api/generate/lyrics/"
+	_url := "https://studio-api.prod.suno.com/api/generate/lyrics/"
 	jsonData, err := json.Marshal(d)
 	if err != nil {
 		log.Printf("GenerateLyrics failed, error marshalling request data: %v", err)
@@ -265,6 +268,8 @@ func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse)
 		log.Printf("SunoChat failed, error unmarshalling generate data: %v, response body: %s", err, string(body))
 		return nil, NewErrorResponse(ErrCodeResponseInvalid, fmt.Sprintf("parse generate data failed, response body: %s", string(body)))
 	}
+
+	log.Println("打点", 55555555, v2GenerateData.Clips)
 
 	clipIds := make([]string, len(v2GenerateData.Clips))
 	for i, clip := range v2GenerateData.Clips {
