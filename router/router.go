@@ -24,6 +24,7 @@ func CreateTask() fiber.Handler {
 		serve.Session = serve.GetSession(ck)
 		var body []byte
 		var errResp *serve.ErrorResponse
+
 		if c.Path() == "/v2/generate" {
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {

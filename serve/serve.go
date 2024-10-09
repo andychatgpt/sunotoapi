@@ -194,7 +194,9 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 
 func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
 	//https://studio-api.suno.ai/api/generate/v2/
-	_url := "https://studio-api.suno.ai/api/generate/v2/"
+	//https://studio-api.prod.suno.com/api/generate/v2/
+	//_url := "https://studio-api.suno.ai/api/generate/v2/"
+	_url := "https://studio-api.prod.suno.com/api/generate/v2/"
 	jsonData, err := json.Marshal(d)
 	if err != nil {
 		log.Printf("V2Generate failed, error marshalling request data: %v", err)
@@ -249,6 +251,7 @@ func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse)
 		"prompt":                 "",
 		"make_instrumental":      false,
 	}
+
 	body, errResp := V2Generate(d, ck)
 
 	log.Println("12312312", string(body), errResp)
