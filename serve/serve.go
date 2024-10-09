@@ -198,6 +198,11 @@ func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
 	//_url := "https://studio-api.suno.ai/api/generate/v2/"
 	_url := "https://studio-api.prod.suno.com/api/generate/v2/"
 	jsonData, err := json.Marshal(d)
+
+	//生成语音
+	log.Println("jsonData _url", _url)
+	log.Println("jsonData", jsonData)
+
 	if err != nil {
 		log.Printf("V2Generate failed, error marshalling request data: %v", err)
 		return nil, NewErrorResponseWithError(ErrCodeJsonFailed, err)
