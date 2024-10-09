@@ -201,7 +201,7 @@ func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
 
 	//生成语音
 	log.Println("jsonData _url", _url)
-	log.Println("jsonData", jsonData)
+	log.Println("jsonData", string(jsonData))
 
 	if err != nil {
 		log.Printf("V2Generate failed, error marshalling request data: %v", err)
