@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"log"
 )
 
 func CreateTask() fiber.Handler {
@@ -83,6 +84,7 @@ func SunoChat() fiber.Handler {
 			ck = serve.ParseToken(ck)
 		}
 		serve.Session = serve.GetSession(ck)
+		log.Println("serve.Session101", serve.Session)
 		res, errResp := serve.SunoChat(data, ck)
 		if errResp != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(errResp)

@@ -267,8 +267,7 @@ func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse)
 	}
 
 	body, errResp := V2Generate(d, ck)
-
-	log.Println("12312312", string(body), errResp)
+	log.Println("8888888", string(body), errResp)
 
 	if errResp != nil {
 		return nil, errResp
