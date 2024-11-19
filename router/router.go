@@ -3,10 +3,10 @@ package router
 import (
 	"fksunoapi/cfg"
 	"fksunoapi/serve"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"log"
 )
 
 func CreateTask() fiber.Handler {
@@ -72,6 +72,8 @@ func GetTask() fiber.Handler {
 }
 
 func SunoChat() fiber.Handler {
+
+	fmt.Println("SunoChat111111111")
 	return func(c *fiber.Ctx) error {
 		var data map[string]interface{}
 		if err := c.BodyParser(&data); err != nil {
@@ -84,7 +86,7 @@ func SunoChat() fiber.Handler {
 			ck = serve.ParseToken(ck)
 		}
 		serve.Session = serve.GetSession(ck)
-		log.Println("serve.Session101", serve.Session)
+		fmt.Println("serve.Session101", serve.Session)
 		res, errResp := serve.SunoChat(data, ck)
 		if errResp != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(errResp)
