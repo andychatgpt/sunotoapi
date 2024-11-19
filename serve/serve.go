@@ -8,6 +8,7 @@ import (
 	"fksunoapi/models"
 	"fmt"
 	fhttp "github.com/bogdanfinn/fhttp"
+	"github.com/google/uuid"
 	"io"
 	"log"
 	"net/http"
@@ -252,12 +253,17 @@ func GetLyricsTask(ids, c string) ([]byte, *ErrorResponse) {
 
 func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse) {
 	lastUserContent := getLastUserContent(c)
+	uid := uuid.NewString()
 	d := map[string]interface{}{
-		//"mv":                     c["model"].(string),
 		"mv":                     "chirp-v3-5",
 		"gpt_description_prompt": lastUserContent,
 		"prompt":                 "",
 		"make_instrumental":      false,
+		"token":                  nil,
+		"generation_type":        "TEXT",
+		"metadata": map[string]interface{}{
+			"create_session_token": uid,
+		},
 	}
 
 	body, errResp := V2Generate(d, ck)
