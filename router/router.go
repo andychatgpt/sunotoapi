@@ -61,9 +61,10 @@ func CreateTask() fiber.Handler {
 			//uid := uuid.NewString()
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
-			//data["metadata"] = map[string]interface{}{
-			//	"create_session_token": uid,
-			//}
+			sessionId, _ := serve.GetSessionS()
+			data["metadata"] = map[string]interface{}{
+				"create_session_token": sessionId,
+			}
 
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {
