@@ -24,6 +24,7 @@ func GetSessionS() (string, error) {
 		"session_properties": sessionProperties,
 		"session_type":       1,
 	}
+
 	payloadBytes, err := json.Marshal(payload)
 
 	if err != nil {

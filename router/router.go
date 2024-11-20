@@ -26,6 +26,12 @@ func CreateTask() fiber.Handler {
 		}
 		*/
 
+		//sessionId, err := serve.GetSessionS()
+		//if err != nil {
+		//	return c.Status(fiber.StatusInternalServerError).JSON(serve.NewErrorResponse(200, "error 901"))
+		//}
+		//log.Println("sessionId:", sessionId)
+
 		var data map[string]interface{}
 
 		if err := c.BodyParser(&data); err != nil {
@@ -43,13 +49,6 @@ func CreateTask() fiber.Handler {
 		var errResp *serve.ErrorResponse
 
 		if c.Path() == "/v2/generate" {
-
-			//sessionId, err := serve.GetSessionS()
-			//if err != nil {
-			//	return c.Status(fiber.StatusInternalServerError).JSON(serve.NewErrorResponse(200, "error 901"))
-			//}
-			//log.Println("sessionId:", sessionId)
-
 			check, errResp := serve.CheckSong(ck)
 
 			if errResp != nil {
