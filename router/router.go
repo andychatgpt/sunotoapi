@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"log"
+	"github.com/google/uuid"
 )
 
 func CreateTask() fiber.Handler {
@@ -44,8 +44,11 @@ func CreateTask() fiber.Handler {
 
 		if c.Path() == "/v2/generate" {
 
-			sessionId, _ := serve.GetSessionS()
-			log.Println("sessionId:", sessionId)
+			//sessionId, err := serve.GetSessionS()
+			//if err != nil {
+			//	return c.Status(fiber.StatusInternalServerError).JSON(serve.NewErrorResponse(200, "error 901"))
+			//}
+			//log.Println("sessionId:", sessionId)
 
 			check, errResp := serve.CheckSong(ck)
 
@@ -67,6 +70,7 @@ func CreateTask() fiber.Handler {
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
 
+			sessionId := uuid.NewString()
 			if sessionId != "" {
 				data["metadata"] = map[string]interface{}{
 					"create_session_token": sessionId,

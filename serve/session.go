@@ -36,6 +36,7 @@ func GetSessionS() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
