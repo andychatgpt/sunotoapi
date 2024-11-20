@@ -59,6 +59,9 @@ func CaptchaHandlers() (string, *ErrorResponse) {
 	var rps Rsp
 
 	err = json.Unmarshal(body, &rps)
+	if rps.Token == "" {
+		return "", NewErrorResponse(ErrCodeTimeout, "CaptchaHandlers code 101 error")
 
+	}
 	return rps.Token, nil
 }
