@@ -7,7 +7,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/google/uuid"
 )
 
 func CreateTask() fiber.Handler {
@@ -59,12 +58,12 @@ func CreateTask() fiber.Handler {
 
 			//lastUserContent := serve.GetLastUserContent(data)
 			//log.Println("show1", lastUserContent)
-			uid := uuid.NewString()
+			//uid := uuid.NewString()
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
-			data["metadata"] = map[string]interface{}{
-				"create_session_token": uid,
-			}
+			//data["metadata"] = map[string]interface{}{
+			//	"create_session_token": uid,
+			//}
 
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {
