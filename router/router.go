@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"log"
 )
 
 func CreateTask() fiber.Handler {
@@ -62,6 +63,7 @@ func CreateTask() fiber.Handler {
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
 			sessionId, _ := serve.GetSessionS()
+			log.Println("sessionId:", sessionId)
 			data["metadata"] = map[string]interface{}{
 				"create_session_token": sessionId,
 			}
