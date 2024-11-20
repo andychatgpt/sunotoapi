@@ -43,6 +43,10 @@ func CreateTask() fiber.Handler {
 		var errResp *serve.ErrorResponse
 
 		if c.Path() == "/v2/generate" {
+
+			sessionId, _ := serve.GetSessionS()
+			log.Println("sessionId:", sessionId)
+
 			check, errResp := serve.CheckSong(ck)
 
 			if errResp != nil {
@@ -62,10 +66,11 @@ func CreateTask() fiber.Handler {
 			//uid := uuid.NewString()
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
-			sessionId, _ := serve.GetSessionS()
-			log.Println("sessionId:", sessionId)
-			data["metadata"] = map[string]interface{}{
-				"create_session_token": sessionId,
+
+			if sessionId != "" {
+				data["metadata"] = map[string]interface{}{
+					"create_session_token": sessionId,
+				}
 			}
 
 			body, errResp = serve.V2Generate(data, ck)

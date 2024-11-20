@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -43,10 +43,14 @@ func GetSessionS() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to send request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	// Read and parse the response
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+
+	log.Println("response body:", string(body))
 	if err != nil {
 		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
