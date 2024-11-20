@@ -10,7 +10,7 @@ type Claims struct {
 
 var Jwt string
 
-func getLastUserContent(data map[string]interface{}) string {
+func GetLastUserContent(data map[string]interface{}) string {
 	var lastUserContent string
 	messages, ok := data["messages"].([]interface{})
 	if !ok {

@@ -7,11 +7,27 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/google/uuid"
 )
 
 func CreateTask() fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		/**
+		d := map[string]interface{}{
+			"mv":                     "chirp-v3-5",
+			"gpt_description_prompt": lastUserContent,
+			"prompt":                 "",
+			"make_instrumental":      false,
+			"token":                  TokenCaptcha,
+			"generation_type":        "TEXT",
+			"metadata": map[string]interface{}{
+				"create_session_token": uid,
+			},
+		}
+		*/
+
 		var data map[string]interface{}
+
 		if err := c.BodyParser(&data); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(serve.NewErrorResponse(serve.ErrCodeJsonFailed, "Cannot parse JSON"))
 		}
@@ -27,6 +43,29 @@ func CreateTask() fiber.Handler {
 		var errResp *serve.ErrorResponse
 
 		if c.Path() == "/v2/generate" {
+			check, errResp := serve.CheckSong(ck)
+
+			if errResp != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(errResp)
+			}
+
+			TokenCaptcha := ""
+			if check {
+				TokenCaptcha, errResp = serve.CaptchaHandlers()
+				if errResp != nil {
+					return c.Status(fiber.StatusInternalServerError).JSON(errResp)
+				}
+			}
+
+			//lastUserContent := serve.GetLastUserContent(data)
+			//log.Println("show1", lastUserContent)
+			uid := uuid.NewString()
+			data["token"] = TokenCaptcha
+			data["generation_type"] = "TEXT"
+			data["metadata"] = map[string]interface{}{
+				"create_session_token": uid,
+			}
+
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {
 			body, errResp = serve.GenerateLyrics(data, ck)

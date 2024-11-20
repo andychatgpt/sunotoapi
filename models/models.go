@@ -14,6 +14,9 @@ type Config struct {
 	Proxy struct {
 		Url string `yaml:"Url"`
 	}
+	Auth struct {
+		Captcha string `yaml:"Url"`
+	}
 }
 
 type GetTokenData struct {

@@ -251,15 +251,50 @@ func GetLyricsTask(ids, c string) ([]byte, *ErrorResponse) {
 	return body, nil
 }
 
+func CheckSong(c string) (bool, *ErrorResponse) {
+	var data struct {
+		Required bool `json:"required"`
+	}
+
+	Bytes, err := sendRequest("https://studio-api.prod.suno.com/api/c/check", "POST", c, []byte(`{"ctype":"generation"}`))
+
+	log.Println("Bytes", string(Bytes))
+
+	if err != nil {
+		return false, err
+	}
+
+	_ = json.Unmarshal(Bytes, &data)
+	if data.Required == true {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func SunoChat(c map[string]interface{}, ck string) (interface{}, *ErrorResponse) {
-	lastUserContent := getLastUserContent(c)
+
+	check, err := CheckSong(ck)
+
+	if err != nil {
+		return nil, err
+	}
+
+	TokenCaptcha := ""
+	if check {
+		TokenCaptcha, err = CaptchaHandlers()
+		if err != nil {
+			return nil, err
+		}
+	}
+	lastUserContent := GetLastUserContent(c)
 	uid := uuid.NewString()
 	d := map[string]interface{}{
 		"mv":                     "chirp-v3-5",
 		"gpt_description_prompt": lastUserContent,
 		"prompt":                 "",
 		"make_instrumental":      false,
-		"token":                  nil,
+		"token":                  TokenCaptcha,
 		"generation_type":        "TEXT",
 		"metadata": map[string]interface{}{
 			"create_session_token": uid,
