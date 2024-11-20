@@ -222,8 +222,6 @@ func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 	//_url := "https://studio-api.suno.ai/api/feed/?ids=" + ids
 
 	body, errResp := sendRequest(_url, "GET", c, nil)
-
-	log.Println("body", string(body))
 	if errResp != nil {
 		return body, errResp
 	}
