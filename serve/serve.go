@@ -229,6 +229,7 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 	//req.Header.Add("Priority", "u=1, i")
 
 	res, err := common.Client.Do(req)
+	log.Println("res", res.StatusCode, res.Status, err)
 
 	if err != nil {
 		log.Printf("sendRequest failed2222222, error sending request: %v", err)
