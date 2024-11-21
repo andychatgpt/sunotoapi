@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/google/uuid"
+	"log"
 )
 
 func CreateTask() fiber.Handler {
@@ -45,6 +46,7 @@ func CreateTask() fiber.Handler {
 		}
 
 		serve.Session = serve.GetSession(ck)
+
 		var body []byte
 		var errResp *serve.ErrorResponse
 
@@ -109,6 +111,7 @@ func GetTask() fiber.Handler {
 		var body []byte
 		var errResp *serve.ErrorResponse
 		if c.Path() == "/v2/feed" {
+			log.Println("data1111", data)
 			body, errResp = serve.V2GetFeedTask(data["ids"], ck)
 		} else if c.Path() == "/v2/lyrics/task" {
 			body, errResp = serve.GetLyricsTask(data["ids"], ck)

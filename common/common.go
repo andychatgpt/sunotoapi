@@ -5,7 +5,6 @@ import (
 	"fksunoapi/cfg"
 	tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/bogdanfinn/tls-client/profiles"
-	"log"
 )
 
 //goland:noinspection SpellCheckingInspection
@@ -27,6 +26,6 @@ func init() {
 		tls_client.WithClientProfile(profiles.Chrome_120),
 	}...)
 
-	log.Println("cfg.Config.Proxy.Url", cfg.Config.Proxy.Url)
-	Client.SetProxy(cfg.Config.Proxy.Url)
+	//log.Println("cfg.Config.Proxy.Url", cfg.Config.Proxy.Url)
+	//Client.SetProxy(cfg.Config.Proxy.Url)
 }

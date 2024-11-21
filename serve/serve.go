@@ -51,25 +51,31 @@ func NewErrorResponseWithError(errorCode int, err error) *ErrorResponse {
 func GetSession(c string) string {
 	fmt.Println("cookie1", c)
 
-	_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.73.3"
+	//https://clerk.suno.com/v1/client?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3
+	//_url := "https://" + cfg.Domain + "/v1/client?_clerk_js_version=4.73.3"
+	_url := "https://" + cfg.Domain + "/v1/client?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3"
+	//https://clerk.suno.com/v1/client?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3
 	method := "GET"
 	client := &http.Client{}
 	req, err := http.NewRequest(method, _url, nil)
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
-	req.Header.Add("Cookie", "__client="+c)
+	req.Header.Add("Cookie", "ajs_anonymous_id=e4825918-be5f-43f5-9f84-9d2e871fedda; __client="+c)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Printf("GetSession failed, error: %v", err)
 		return ""
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
 	if res.StatusCode != 200 {
 		log.Printf("GetSession failed, invalid status code: %d", res.StatusCode)
 		return ""
 	}
+
 	body, _ := io.ReadAll(res.Body)
 
-	//log.Printf("session", string(body))
+	log.Printf("session", string(body))
 
 	var data models.GetSessionData
 	if err = json.Unmarshal(body, &data); err != nil {
@@ -92,7 +98,14 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	if time.Now().After(time.Unix(SessionExp/1000, 0)) {
 		Session = GetSession(c)
 	}
-	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?_clerk_js_version=4.73.3", Session)
+
+	Session = "sess_2lhAxcrswO5EcZgj5ghGDcRcA7F"
+
+	log.Println("Session", Session)
+
+	//https://clerk.suno.com/v1/client/sessions/sess_2lhAxcrswO5EcZgj5ghGDcRcA7F/tokens?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3
+	_url := fmt.Sprintf("https://"+cfg.Domain+"/v1/client/sessions/%s/tokens?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3", Session)
+	log.Println("_url", _url)
 	method := "POST"
 
 	req, err := fhttp.NewRequest(method, _url, nil)
@@ -101,8 +114,11 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 		log.Printf("GetJwtToken failed, error: %v", err)
 		return "", NewErrorResponse(ErrCodeRequestFailed, "create request failed")
 	}
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 	req.Header.Add("Cookie", "__client="+c)
+	req.Header.Add("origin", "https://suno.com")
+	req.Header.Add("referer", "https://suno.com/")
+	req.Header.Add("referer", "https://suno.com/")
 
 	res, err := common.Client.Do(req)
 	if err != nil {
@@ -136,15 +152,60 @@ func GetJwtToken(c string) (string, *ErrorResponse) {
 	return data.Jwt, nil
 }
 
-func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
-	jwt, errResp := GetJwtToken(c)
+//jwt config
 
-	//log.Println("jwt", jwt, "342342", errResp)
-	if errResp != nil {
-		errMsg := fmt.Sprintf("error getting JWT: %s", errResp.ErrorMsg)
-		log.Printf("sendRequest failed, %s", errMsg)
-		return nil, NewErrorResponse(errResp.ErrorCode, errMsg)
+func GetJwtConfig(c string) (string, string) {
+	fmt.Println("cookie1", c)
+	_url := "https://" + cfg.Domain + "/v1/client?__clerk_api_version=2021-02-05&_clerk_js_version=5.34.3"
+	method := "GET"
+	client := &http.Client{}
+	req, err := http.NewRequest(method, _url, nil)
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
+	req.Header.Add("Cookie", "ajs_anonymous_id=e4825918-be5f-43f5-9f84-9d2e871fedda; __client="+c)
+	res, err := client.Do(req)
+	if err != nil {
+		log.Printf("GetSession failed, error: %v", err)
+		return "", ""
 	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
+	if res.StatusCode != 200 {
+		log.Printf("GetSession failed, invalid status code: %d", res.StatusCode)
+		return "", ""
+	}
+
+	body, _ := io.ReadAll(res.Body)
+
+	log.Printf("session", string(body))
+
+	var data models.GetSessionData
+	if err = json.Unmarshal(body, &data); err != nil {
+		log.Printf("GetSession failed, json unmarshal error: %v", err)
+		return "", ""
+	}
+
+	if len(data.Response.Sessions) > 0 {
+		SessionExp = data.Response.Sessions[0].ExpireAt
+	}
+
+	if len(data.Response.Sessions) > 0 {
+		return data.Response.Sessions[0].Id, data.Response.Sessions[0].LastActiveToken.Jwt
+	}
+
+	return "", ""
+}
+func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
+	//jwt, errResp := GetJwtToken(c)
+
+	session, jwt := GetJwtConfig(c)
+	log.Println("jwt", jwt, "342342", session)
+
+	//if errResp != nil {
+	//	errMsg := fmt.Sprintf("error getting JWT: %s", errResp.ErrorMsg)
+	//	log.Printf("sendRequest failed, %s", errMsg)
+	//	return nil, NewErrorResponse(errResp.ErrorCode, errMsg)
+	//}
 
 	//client := &http.Client{}
 	var req *fhttp.Request
@@ -160,10 +221,7 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 		return nil, NewErrorResponseWithError(ErrCodeRequestFailed, err)
 	}
 
-	//要突破
-
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:127.0) Gecko/20100101 Firefox/127.0")
-
 	req.Header.Add("Authorization", "Bearer "+jwt)
 	//req.Header.Add("Origin", "https://suno.com")
 	req.Header.Add("Referer", "https://suno.com")
