@@ -277,7 +277,7 @@ func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 	ids = url.QueryEscape(ids)
 	//https://studio-api.prod.suno.com/api/feed/v2?ids=e77fe186-4c9f-4192-a446-b3c80383ff80%2Ccbd2bf2a-34be-41c8-9692-22c4982eaf03&page=5000
 
-	_url := "https://studio-api.prod.suno.com/api/feed/v2?ids=" + ids + "&page=5000"
+	_url := "https://studio-api.prod.suno.com/api/feed/v2?ids=" + ids
 
 	log.Println("_url", _url)
 	//_url := "https://studio-api.suno.ai/api/feed/?ids=" + ids
