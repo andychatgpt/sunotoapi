@@ -70,12 +70,59 @@ func CreateTask() fiber.Handler {
 			//uid := uuid.NewString()
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
-
 			sessionId := uuid.NewString()
 			if sessionId != "" {
 				data["metadata"] = map[string]interface{}{
 					"create_session_token": sessionId,
 				}
+			}
+
+			if _, ok := data["artist_clip_id"]; !ok {
+				data["artist_clip_id"] = nil
+			}
+
+			if _, ok := data["artist_end_s"]; !ok {
+				data["artist_end_s"] = nil
+			}
+
+			if _, ok := data["artist_start_s"]; !ok {
+				data["artist_start_s"] = nil
+			}
+
+			if _, ok := data["continue_at"]; !ok {
+				data["continue_at"] = nil
+			}
+
+			if _, ok := data["continue_clip_id"]; !ok {
+				data["continue_clip_id"] = nil
+			}
+
+			if _, ok := data["continued_aligned_prompt"]; !ok {
+				data["continued_aligned_prompt"] = nil
+			}
+
+			if _, ok := data["infill_end_s"]; !ok {
+				data["infill_end_s"] = nil
+			}
+
+			if _, ok := data["infill_start_s"]; !ok {
+				data["infill_start_s"] = nil
+			}
+
+			if _, ok := data["negative_tags"]; !ok {
+				data["negative_tags"] = ""
+			}
+
+			if _, ok := data["tags"]; !ok {
+				data["tags"] = ""
+			}
+
+			if _, ok := data["task"]; !ok {
+				data["task"] = nil
+			}
+
+			if _, ok := data["title"]; !ok {
+				data["title"] = ""
 			}
 
 			body, errResp = serve.V2Generate(data, ck)
