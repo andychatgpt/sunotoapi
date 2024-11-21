@@ -27,5 +27,5 @@ func init() {
 	}...)
 
 	//log.Println("cfg.Config.Proxy.Url", cfg.Config.Proxy.Url)
-	//Client.SetProxy(cfg.Config.Proxy.Url)
+	Client.SetProxy(cfg.Config.Proxy.Url)
 }
