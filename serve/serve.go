@@ -275,11 +275,11 @@ func V2Generate(d map[string]interface{}, c string) ([]byte, *ErrorResponse) {
 
 func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 	ids = url.QueryEscape(ids)
-	//https://studio-api.prod.suno.com/api/feed/v2?ids=ea0e897e-22fa-4b55-8876-56e8529c24a1%2C37c11f85-09be-4d84-a8be-63925d697376
 	//https://studio-api.prod.suno.com/api/feed/v2?ids=e77fe186-4c9f-4192-a446-b3c80383ff80%2Ccbd2bf2a-34be-41c8-9692-22c4982eaf03&page=5000
 
-	_url := "https://studio-api.prod.suno.com/api/feed/?ids=" + ids + "&page=5000"
+	_url := "https://studio-api.prod.suno.com/api/feed/v2?ids=" + ids + "&page=5000"
 
+	log.Println("_url", _url)
 	//_url := "https://studio-api.suno.ai/api/feed/?ids=" + ids
 
 	body, errResp := sendRequest(_url, "GET", c, nil)
