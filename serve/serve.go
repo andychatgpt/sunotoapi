@@ -240,8 +240,7 @@ func sendRequest(url, method, c string, data []byte) ([]byte, *ErrorResponse) {
 	}(res.Body)
 
 	body, _ := io.ReadAll(res.Body)
-
-	//log.Println("bodybodybodybodybodybody", string(body))
+	log.Println("bodybodybodybodybodybody", string(body))
 
 	if res.StatusCode != 200 {
 		log.Printf("sendRequest failed55555555, unexpected status code: %d, response body: %s", res.StatusCode, string(body))
@@ -284,7 +283,7 @@ func V2GetFeedTask(ids, c string) ([]byte, *ErrorResponse) {
 
 	body, errResp := sendRequest(_url, "GET", c, nil)
 
-	log.Println("body", string(body))
+	//log.Println("body", string(body))
 	if errResp != nil {
 		return body, errResp
 	}
