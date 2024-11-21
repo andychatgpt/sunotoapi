@@ -177,7 +177,7 @@ func GetJwtConfig(c string) (string, string) {
 
 	body, _ := io.ReadAll(res.Body)
 
-	log.Printf("session", string(body))
+	//log.Printf("session", string(body))
 
 	var data models.GetSessionData
 	if err = json.Unmarshal(body, &data); err != nil {
