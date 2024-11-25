@@ -7,7 +7,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/google/uuid"
 	"log"
 )
 
@@ -70,12 +69,12 @@ func CreateTask() fiber.Handler {
 			//uid := uuid.NewString()
 			data["token"] = TokenCaptcha
 			data["generation_type"] = "TEXT"
-			sessionId := uuid.NewString()
-			if sessionId != "" {
-				data["metadata"] = map[string]interface{}{
-					"create_session_token": sessionId,
-				}
+			//sessionId := uuid.NewString()
+			//if sessionId != "" {
+			data["metadata"] = map[string]interface{}{
+				"flyrics model": "default",
 			}
+			//}
 
 			if _, ok := data["artist_clip_id"]; !ok {
 				data["artist_clip_id"] = nil
@@ -125,6 +124,8 @@ func CreateTask() fiber.Handler {
 				data["title"] = ""
 			}
 
+			data["user_uploaded images b64"] = ""
+
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {
 			body, errResp = serve.GenerateLyrics(data, ck)
@@ -172,7 +173,6 @@ func GetTask() fiber.Handler {
 
 func SunoChat() fiber.Handler {
 
-	fmt.Println("SunoChat111111111")
 	return func(c *fiber.Ctx) error {
 		var data map[string]interface{}
 		if err := c.BodyParser(&data); err != nil {
