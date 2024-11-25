@@ -124,7 +124,7 @@ func CreateTask() fiber.Handler {
 			//	data["title"] = ""
 			//}
 
-			data["user_uploaded images b64"] = ""
+			data["user_uploaded images b64"] = []string{}
 
 			body, errResp = serve.V2Generate(data, ck)
 		} else if c.Path() == "/v2/lyrics/create" {
