@@ -14,6 +14,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		ProxyHeader: "X-Forwarded-For",
 	})
+
 	router.SetupRoutes(app)
-	app.Listen(":" + cfg.Config.Server.Port)
+	_ = app.Listen(":" + cfg.Config.Server.Port)
 }

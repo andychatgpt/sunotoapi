@@ -39,7 +39,8 @@ func CreateTask() fiber.Handler {
 		}
 		ck := c.Get("Authorization")
 		log.Printf("ck", ck)
-		ck = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaWVudF8ycDc2cDZZQ09QRHNtQVNab0w4bTlWczFnMnoiLCJyb3RhdGluZ190b2tlbiI6IjVnbTh3bncyY3VxbTdxZ3h4amppYjZvcWxmbzRscW00ZHpteDE3YWQifQ.W26zyWRNiRCLLNlbFalv4JybeQXjxqITQ8m_RIZdaaiDnIY9taWona7RWDQn36qaH7-5cvPeAnswwZwY-awvG-SQbbuqBHKOo2o1qb7tx5-PQgAYXFkH16k5W-srkfY-bLdlTSM3evGGir1uE16IwToTMgFwfcLO8CoyOv8xF3l_V1VYoGz9NrTsNcuvShEdg5qs7jyknk74zincb3mGtIOJ5oeLK9EfkzT_HGhvFd0SZ4IGGPxp6cawhPqrIXvY3WXjHjEcrjQWah-QPywL-Vdqr5QYjKOJZwf0DNtXyCD6T2zvreHBSeNcsgIsMslrROgXJLxE6VP2k7eWnHkDDA"
+
+		//ck = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaWVudF8ycDc2cDZZQ09QRHNtQVNab0w4bTlWczFnMnoiLCJyb3RhdGluZ190b2tlbiI6IjVnbTh3bncyY3VxbTdxZ3h4amppYjZvcWxmbzRscW00ZHpteDE3YWQifQ.W26zyWRNiRCLLNlbFalv4JybeQXjxqITQ8m_RIZdaaiDnIY9taWona7RWDQn36qaH7-5cvPeAnswwZwY-awvG-SQbbuqBHKOo2o1qb7tx5-PQgAYXFkH16k5W-srkfY-bLdlTSM3evGGir1uE16IwToTMgFwfcLO8CoyOv8xF3l_V1VYoGz9NrTsNcuvShEdg5qs7jyknk74zincb3mGtIOJ5oeLK9EfkzT_HGhvFd0SZ4IGGPxp6cawhPqrIXvY3WXjHjEcrjQWah-QPywL-Vdqr5QYjKOJZwf0DNtXyCD6T2zvreHBSeNcsgIsMslrROgXJLxE6VP2k7eWnHkDDA"
 
 		if ck == "" {
 			ck = cfg.Config.App.Client
@@ -75,8 +76,9 @@ func CreateTask() fiber.Handler {
 			//sessionId := uuid.NewString()
 			//if sessionId != "" {
 			data["metadata"] = map[string]interface{}{
-				"flyrics model": "default",
+				"lyrics_model": "default",
 			}
+
 			//}
 
 			//if _, ok := data["artist_clip_id"]; !ok {
@@ -152,7 +154,8 @@ func GetTask() fiber.Handler {
 			return c.Status(fiber.StatusBadRequest).JSON(serve.NewErrorResponse(serve.ErrCodeRequestFailed, "Cannot find ids"))
 		}
 		ck := c.Get("Authorization")
-		ck = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaWVudF8ycDc2cDZZQ09QRHNtQVNab0w4bTlWczFnMnoiLCJyb3RhdGluZ190b2tlbiI6IjVnbTh3bncyY3VxbTdxZ3h4amppYjZvcWxmbzRscW00ZHpteDE3YWQifQ.W26zyWRNiRCLLNlbFalv4JybeQXjxqITQ8m_RIZdaaiDnIY9taWona7RWDQn36qaH7-5cvPeAnswwZwY-awvG-SQbbuqBHKOo2o1qb7tx5-PQgAYXFkH16k5W-srkfY-bLdlTSM3evGGir1uE16IwToTMgFwfcLO8CoyOv8xF3l_V1VYoGz9NrTsNcuvShEdg5qs7jyknk74zincb3mGtIOJ5oeLK9EfkzT_HGhvFd0SZ4IGGPxp6cawhPqrIXvY3WXjHjEcrjQWah-QPywL-Vdqr5QYjKOJZwf0DNtXyCD6T2zvreHBSeNcsgIsMslrROgXJLxE6VP2k7eWnHkDDA"
+
+		//ck = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaWVudF8ycDc2cDZZQ09QRHNtQVNab0w4bTlWczFnMnoiLCJyb3RhdGluZ190b2tlbiI6IjVnbTh3bncyY3VxbTdxZ3h4amppYjZvcWxmbzRscW00ZHpteDE3YWQifQ.W26zyWRNiRCLLNlbFalv4JybeQXjxqITQ8m_RIZdaaiDnIY9taWona7RWDQn36qaH7-5cvPeAnswwZwY-awvG-SQbbuqBHKOo2o1qb7tx5-PQgAYXFkH16k5W-srkfY-bLdlTSM3evGGir1uE16IwToTMgFwfcLO8CoyOv8xF3l_V1VYoGz9NrTsNcuvShEdg5qs7jyknk74zincb3mGtIOJ5oeLK9EfkzT_HGhvFd0SZ4IGGPxp6cawhPqrIXvY3WXjHjEcrjQWah-QPywL-Vdqr5QYjKOJZwf0DNtXyCD6T2zvreHBSeNcsgIsMslrROgXJLxE6VP2k7eWnHkDDA"
 
 		if ck == "" {
 			ck = cfg.Config.App.Client
